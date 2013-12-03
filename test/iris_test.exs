@@ -20,4 +20,13 @@ defmodule IrisTest do
         [method: "DELETE", path: "/user/:id", controller: :user, action: :destroy],
       ]
   end
+
+  test "get route" do
+    assert get("/users", controller: "user#index") ==
+      [[method: "GET", path: "/users", controller: :user, action: :index]]
+    assert get("/users", controller: :user, action: :index) ==
+      [[method: "GET", path: "/users", controller: :user, action: :index]]
+    assert get("/user/:id", controller: 'user', action: 'show') ==
+      [[method: "GET", path: "/user/:id", controller: :user, action: :show]]
+  end
 end

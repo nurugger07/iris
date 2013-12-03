@@ -33,4 +33,26 @@ defmodule Iris.Router do
     ]
   end
 
+  def get(path, [controller]) do
+    [controller, action] = parse_controller(controller)
+    get(path, [controller: controller, action: action])
+  end
+
+  def get(path, [{_, controller}, {_, action}]) do
+    controller = convert_to_atom(controller)
+    action = convert_to_atom(action)
+    [[method: "GET", path: path, controller: controller, action: action]]
+  end
+
+  defp parse_controller({_, controller}) do
+    cond do
+      String.contains?(controller, "#") -> String.split(controller, "#")
+      true -> controller
+    end
+  end
+
+  defp convert_to_atom(val) when is_atom(val), do: val
+  defp convert_to_atom(val) do
+    :unicode.characters_to_binary(val) |> binary_to_atom
+  end
 end
