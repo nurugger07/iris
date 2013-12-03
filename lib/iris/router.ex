@@ -41,7 +41,25 @@ defmodule Iris.Router do
   def get(path, [{_, controller}, {_, action}]) do
     controller = convert_to_atom(controller)
     action = convert_to_atom(action)
-    [[method: "GET", path: path, controller: controller, action: action]]
+    build_route(:get, path, controller, action)
+  end
+
+  def post(path, [controller]) do
+    [controller, action] = parse_controller(controller)
+    post(path, [controller: controller, action: action])
+  end
+
+  def post(path, [{_, controller}, {_, action}]) do
+    controller = convert_to_atom(controller)
+    action = convert_to_atom(action)
+    build_route(:post, path, controller, action)
+  end
+
+  defp build_route(method, path, controller, action) when is_atom(method) do
+    atom_to_binary(method) |> String.upcase |> build_route(path, controller, action)
+  end
+  defp build_route(method, path, controller, action) when is_binary(method) do
+    [[method: method, path: path, controller: controller, action: action]]
   end
 
   defp parse_controller({_, controller}) do
